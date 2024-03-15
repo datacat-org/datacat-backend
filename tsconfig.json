@@ -1,0 +1,38 @@
+{
+    "compilerOptions": {
+      "target": "es2021",
+      "module": "CommonJS",
+      "lib": ["es2021", "dom"],
+      "declaration": true,
+      "declarationMap": true,
+      "strict": true,
+      "pretty": true,
+      "baseUrl": "./src",
+      "sourceMap": true,
+      "noUnusedLocals": true,
+      "noUnusedParameters": true,
+      "noImplicitReturns": true,
+      "noFallthroughCasesInSwitch": true,
+      "moduleResolution": "node",
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
+      "resolveJsonModule": true,
+      "allowJs": true,
+      "outDir": "release/",
+      "rootDirs": ["src", "."]
+    },
+    "exclude": [
+      "test",
+      "release/build",
+      "release/app/dist",
+      ".erb/dll",
+      "src/tests"
+    ],
+    "include": ["src/**/*"],
+    "ts-node": {
+      "compilerOptions": {
+        "module": "commonjs"
+      }
+    }
+  }
+  
