@@ -39,6 +39,10 @@ app.get("/health", (_, res: Response) => {
   res.status(200).send("OK");
 });
 
+//user routes
+import userRouter from "./router/user/api.user";
+app.use("/api/user", userRouter);
+
 // error handling
 app.use((err: any, _: Request, res: Response, __: any) => {
   console.error(err);

@@ -1,8 +1,7 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
-import { IDataset } from "./datasets.model";
 
 export interface IData extends Document {
-  dataset_id: IDataset["_id"];
+  dataset_id: "string";
   times_annotated: number;
   status: string;
   createdAt: Date;
@@ -10,7 +9,7 @@ export interface IData extends Document {
 }
 
 export const DataSchema: Schema = new Schema({
-  dataset_id: { type: Schema.Types.ObjectId, ref: "dataset", required: true },
+  dataset_id: { type: String, required: true },
   times_annotated: { type: Number, default: 0 },
   status: { type: String, default: "PENDING" },
   createdAt: { type: Date, default: Date.now },
