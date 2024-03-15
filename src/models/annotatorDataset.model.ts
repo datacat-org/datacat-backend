@@ -1,6 +1,5 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
 import { IDataset } from "./datasets.model";
-import { IData } from "./data.model";
 import { IAnnotator } from "./annotators.model";
 
 export interface IAnnotatorDataset extends Document {
