@@ -4,9 +4,9 @@ import axios from "axios";
 
 const { LIGHTHOUSE_API_KEY } = process.env;
 
-export const uploadFileToLighthouse = async (file_path: string) => {
-  const uploadResponse = await lighthouse.upload(
-    file_path,
+export const uploadFileToLighthouse = async (buffer: any) => {
+  const uploadResponse = await lighthouse.uploadBuffer(
+    buffer,
     LIGHTHOUSE_API_KEY as string
   );
   return uploadResponse;

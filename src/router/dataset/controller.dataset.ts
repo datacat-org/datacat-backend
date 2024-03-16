@@ -1,4 +1,5 @@
 import { Dataset } from "../../models/datasets.model";
+import { uploadFileToLighthouse } from "../../handlers/lighthouse.handler";
 
 class DatasetController {
   async getDatasets(query: any) {
@@ -10,10 +11,15 @@ class DatasetController {
       return { status: 500, message: err.message };
     }
   }
-  async createDataset(body: any) {
+  async createDataset(body: any, files: any) {
     try {
       const dataset = await Dataset.create(body);
       //multer code to upload multiple files
+      await Promise.all(
+        files.map((file: any) => {
+          return uploadFileToLighthouse(file.buffer);
+        })
+      );
 
       return { data: dataset, status: 200, message: "Create dataset" };
     } catch (err: any) {
