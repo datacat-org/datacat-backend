@@ -1,5 +1,4 @@
 import { Dataset } from "../../models/datasets.model";
-import { uploadFileToLighthouse } from "../../handlers/lighthouse.handler";
 import { Data } from "../../models/data.model";
 import { Metric } from "../../models/metrics.model";
 import { Annotator } from "../../models/annotators.model";
@@ -17,7 +16,7 @@ class DatasetController {
       return { status: 500, message: err.message };
     }
   }
-  async createDataset(body: any, files: any) {
+  async createDataset(body: any) {
     try {
       const deployedContract = await deployCircleContract(
         body.name,
@@ -25,19 +24,13 @@ class DatasetController {
       );
       const dataset = await Dataset.create({
         ...body,
-        nums_rows: files.length,
+        nums_rows: body.files.length,
         contractId: deployedContract.contractId,
       });
-      //multer code to upload multiple files
-      const uploaded_files = await Promise.all(
-        files.map((file: any) => {
-          return uploadFileToLighthouse(file.buffer);
-        })
-      );
 
       await Promise.all(
-        uploaded_files.map((data: any) => {
-          return Data.create({ dataset_id: dataset._id, cid: data.data.Hash });
+        body.files.map((data: any) => {
+          return Data.create({ dataset_id: dataset._id, cid: data });
         })
       );
 
@@ -48,22 +41,15 @@ class DatasetController {
     }
   }
 
-  async createLabeledData(body: any, files: any) {
+  async createLabeledData(body: any) {
     try {
       const dataset_id: string = body.dataset_id;
-      const uploaded_files = await Promise.all(
-        files.map((file: any) => {
-          return uploadFileToLighthouse(file.buffer);
-        })
-      );
-
-      console.log(body.labels);
 
       await Promise.all(
-        uploaded_files.map((data: any, idx: number) => {
+        body.files.map((data: any, idx: number) => {
           return Data.create({
             dataset_id: dataset_id,
-            cid: data.data.Hash,
+            cid: data,
             is_labeled: true,
             label: +body.labels[idx],
           });
@@ -188,6 +174,16 @@ class DatasetController {
         status: 200,
         message: "Review data",
       };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
+
+  async markReviewedAndProcess(body: any) {
+    try {
+      console.log(body);
+      return { status: 200, message: "Get annotator data" };
     } catch (err: any) {
       console.log(err);
       return { status: 500, message: err.message };
