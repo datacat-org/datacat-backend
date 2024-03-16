@@ -47,6 +47,10 @@ app.use("/api/user", userRouter);
 import datasetRouter from "./router/dataset/api.dataset";
 app.use("/api/dataset", datasetRouter);
 
+//economy routes
+import economyRouter from "./router/economy/api.economy";
+app.use("/api/economy", economyRouter);
+
 // error handling
 app.use((err: any, _: Request, res: Response, __: any) => {
   console.error(err);

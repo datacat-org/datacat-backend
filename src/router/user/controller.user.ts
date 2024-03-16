@@ -74,7 +74,9 @@ class UserController {
       const user_id = params.id;
       const annotator_datasets = await AnnotatorDataset.find({
         annotator_id: user_id,
-      }).populate("dataset_id");
+      })
+        .populate("dataset_id")
+        .exec();
       return {
         data: annotator_datasets,
         status: 200,
