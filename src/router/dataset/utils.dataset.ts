@@ -1,5 +1,6 @@
 import { Metric } from "../../models/metrics.model";
 import { Dataset } from "../../models/datasets.model";
+import { Data } from "../../models/data.model";
 // import mongoose from "mongoose";
 
 export const getDatasetFinalLabels = async (datasetId: string) => {
@@ -35,12 +36,13 @@ export const getDatasetFinalLabels = async (datasetId: string) => {
 
 export const getDatasetAnnotators = async (datasetId: string) => {
   try {
-    const data = await Metric.find({})
-      .populate({
-        path: "data_id",
-        match: { dataset_id: datasetId },
-      })
-      .populate("annotator_id");
+    //get all data ids of dataset
+    // const data=await Data.find({dataset_id:datasetId})
+    const data = await Metric.find({}).populate({
+      path: "data_id",
+      match: { dataset_id: datasetId },
+    });
+
     console.log(data);
     return { data, status: 200, message: "Get all annotators for dataset" };
   } catch (err: any) {
