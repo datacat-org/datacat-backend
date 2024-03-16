@@ -8,6 +8,7 @@ import { payAnnotaters } from "../../handlers/payment.handlers";
 import {
   deployCircleContract,
   setShareHolders,
+  distributeFunds,
 } from "../../handlers/circle.handler";
 import { getDatasetAnnotators } from "./utils.dataset";
 class DatasetController {
@@ -211,6 +212,21 @@ class DatasetController {
         addresses,
         multipliers
       );
+      return { data, status: 200, message: "Get annotator data" };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
+
+  async distributeFunds(body: any) {
+    try {
+      const dataset: any = await Dataset.findOne({
+        _id: new mongoose.Types.ObjectId(body.dataset_id),
+      });
+      const contractId = dataset.contractId;
+      const data = await distributeFunds(contractId);
+
       return { data, status: 200, message: "Get annotator data" };
     } catch (err: any) {
       console.log(err);

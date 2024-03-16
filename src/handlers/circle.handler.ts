@@ -192,3 +192,34 @@ export const setShareHolders = async (
     return error;
   }
 };
+
+export const distributeFunds = async (contract_id: string) => {
+  try {
+    const entitySecretCipherText: any = await createEntitySecretKey();
+    const contract_address = await getContractAddress(contract_id);
+    console.log(contract_address.contract);
+    const contractAddress = contract_address.contract.contractAddress;
+    const url =
+      "https://api.circle.com/v1/w3s/developer/transactions/contractExecution";
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
+      accept: "application/json",
+    };
+    const data = {
+      idempotencyKey: uuidv4(),
+      walletId: process.env.ADMIN_CIRCLE_WALLET_ID,
+      contractAddress: contractAddress,
+      abiFunctionSignature: "distributeFunds()",
+      abiParameters: [],
+      feeLevel: "MEDIUM",
+      entitySecretCipherText,
+    };
+    const response = await axios.post(url, data, { headers });
+    console.log(response.data);
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    return { status: 500, message: err.message };
+  }
+};
