@@ -26,12 +26,12 @@ class UserController {
       }
       //circle ci stuff
       const userWalletCreated = await createUserWallet();
-      const circleWalletAddress = userWalletCreated.data.wallets[0].address;
-      const circleWalletId = userWalletCreated.data.wallets[0].id;
+      const circleWalletAddress = userWalletCreated[0].address;
+      const circleWalletId = userWalletCreated[0].id;
       const annotator = await Annotator.create({
         ...body,
         circle_wallet_address: circleWalletAddress,
-        circle_wallet_set_id: circleWalletId,
+        circle_wallet_id: circleWalletId,
       });
 
       return { data: annotator, status: 200, message: "Create user" };
@@ -111,7 +111,7 @@ class UserController {
       if (!user) {
         throw new Error("User not found");
       }
-      const wallet_id = user.circle_wallet_set_id;
+      const wallet_id = user.circle_wallet_id;
       const walletBalances = await getWalletBalances(wallet_id);
       return {
         data: walletBalances,
