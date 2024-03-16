@@ -1,6 +1,9 @@
 import { AnnotatorDataset } from "../../models/annotatorDataset.model";
 import { Annotator } from "../../models/annotators.model";
-import { createUserWallet, getWalletBalances } from "handlers/circle.handler";
+import {
+  createUserWallet,
+  getWalletBalances,
+} from "../../handlers/circle.handler";
 
 class UserController {
   async getUsers(query: any) {
