@@ -10,20 +10,17 @@ assign it to the selected annotators
 make sure no annotator gets the same data entry more than once
 */
 
-export const distributeWork = async (
-  dataset_id: string,
-  num_workers: number
-) => {
+export const distributeWork = async (dataset_id: string) => {
   const annotators = await Annotator.find({}).select("_id");
   const data = await Data.find({ dataset_id: dataset_id }).select("_id");
   const num_annotators = annotators.length;
   const splits = data.map(async (d) => {
     //select num_workers random indices from annotators
     const selected_annotators = [];
-    for (let i = 0; i < num_workers; i++) {
-      const index = Math.floor(Math.random() * num_annotators);
-      selected_annotators.push(annotators[index]);
-    }
+
+    const index = Math.floor(Math.random() * num_annotators);
+    selected_annotators.push(annotators[index]);
+
     return Promise.all(
       selected_annotators.map((annotator) => {
         console.log(annotator, d);

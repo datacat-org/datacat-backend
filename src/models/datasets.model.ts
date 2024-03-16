@@ -5,6 +5,7 @@ export interface IDataset extends Document {
   description: string;
   type: string;
   times_annotated: number;
+  nums_row: number;
   status: string;
   createdAt: Date;
   updatedAt: Date;
@@ -15,6 +16,7 @@ export const DatasetSchema: Schema = new Schema({
   description: { type: String },
   type: { type: String },
   times_annotated: { type: Number, default: 0 },
+  nums_row: { type: Number, default: 0 },
   status: { type: String, default: "PENDING" },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

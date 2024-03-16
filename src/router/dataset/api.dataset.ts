@@ -22,6 +22,13 @@ router.post(
   }
 );
 
+//get data to annotate
+router.post("/annotate", async (req: Request, res: Response) => {
+  console.log("API path", `${req.originalUrl}-[${req.method}]`);
+  const response = await DatasetController.getDataToAnnotate(req.body);
+  return res.status(response.status).json(response);
+});
+
 //review a datapoint
 router.post("/review", async (req: Request, res: Response) => {
   console.log("API path", `${req.originalUrl}-[${req.method}]`);
