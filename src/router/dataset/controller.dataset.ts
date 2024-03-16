@@ -1,7 +1,6 @@
 import { Dataset } from "../../models/datasets.model";
 import { uploadFileToLighthouse } from "../../handlers/lighthouse.handler";
 import { Data } from "../../models/data.model";
-import { distributeWork } from "../../handlers/distribution.handler";
 import { Metric } from "../../models/metrics.model";
 import { Annotator } from "../../models/annotators.model";
 import mongoose from "mongoose";
@@ -34,8 +33,6 @@ class DatasetController {
           return Data.create({ dataset_id: dataset._id, cid: data.data.Hash });
         })
       );
-
-      await distributeWork(dataset._id);
 
       return { data: dataset, status: 200, message: "Create dataset" };
     } catch (err: any) {
