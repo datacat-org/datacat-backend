@@ -55,4 +55,11 @@ router.get(
   }
 );
 
+//get user wallet balance
+router.get("/:id/wallet/balance", async (req: Request, res: Response) => {
+  console.log("API path", `${req.originalUrl}-[${req.method}]`);
+  const response = await UserController.getUserWalletBalance(req.params);
+  return res.status(response.status).json(response);
+});
+
 export default router;

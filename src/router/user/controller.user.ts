@@ -1,6 +1,6 @@
 import { AnnotatorDataset } from "../../models/annotatorDataset.model";
 import { Annotator } from "../../models/annotators.model";
-import { createUserWallet } from "handlers/circle.handler";
+import { createUserWallet, getWalletBalances } from "handlers/circle.handler";
 
 class UserController {
   async getUsers(query: any) {
@@ -87,6 +87,26 @@ class UserController {
       return { status: 500, message: err.message };
     }
   }
+
+  async getUserWalletBalance(params: any) {
+    try {
+      const user_id = params.id;
+      const user = await Annotator.findById(user_id);
+      if (!user) {
+        throw new Error("User not found");
+      }
+      const wallet_id = user.circle_wallet_set_id;
+      const walletBalances = await getWalletBalances(wallet_id);
+      return {
+        data: walletBalances,
+        status: 200,
+        message: "Get wallet balances for user",
+      };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }    
 }
 
 export default new UserController();
