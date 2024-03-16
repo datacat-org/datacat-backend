@@ -5,7 +5,7 @@ import { abi, byteCode } from "../abi/transfer.abi.json";
 
 const entitySecretCipherText = process.env.CIRCLE_ENTITY_SECRET as string;
 const walletSetId = process.env.CIRCLE_WALLET_SET_ID;
-const usdcTokenID = "7adb2b7d-c9cd-5164-b2d4-b73b088274dc";
+const usdcTokenID = "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747";
 const contractAbi = abi;
 
 export const createEntitySecretKey = async () => {
@@ -140,6 +140,7 @@ export const deployCircleContract = async (
     walletId: process.env.ADMIN_CIRCLE_WALLET_ID, //replace with platform wallet ID,
     blockchain: "MATIC-MUMBAI",
     feeLevel: "HIGH",
+    constructorSignature: "constructor(address initialOwner)",
     constructorParameters: [usdcTokenID],
     entitySecretCiphertext: entitySecretCipherText,
     abiJSON: JSON.stringify(contractAbi),
@@ -161,27 +162,28 @@ export const setShareHolders = async (
   walletAddresses: any,
   shareAmounts: any
 ) => {
+  const entitySecretCipherText: any = await createEntitySecretKey();
   const contract_address = await getContractAddress(contract_id);
-  console.log(contract_address);
+  const contractAddress = contract_address.contract.contractAddress;
   const url =
-    "https://api.circle.com/v1/w3s/developer/transactions/contract-execution";
+    "https://api.circle.com/v1/w3s/developer/transactions/contractExecution";
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
+    accept: "application/json",
   };
   const data = {
     idempotencyKey: uuidv4(),
     walletId: process.env.ADMIN_CIRCLE_WALLET_ID,
-    contractAddress: contract_address,
+    contractAddress: contractAddress,
     abiFunctionSignature:
       "setShares(address[] memory _payees,uint256[] memory _shares)",
     abiParameters: [walletAddresses, shareAmounts],
     feeLevel: "MEDIUM",
+    entitySecretCipherText,
   };
   try {
     const response = await axios.post(url, data, { headers });
-
-    console.log("bam");
     console.log(response.data);
     return response.data;
   } catch (error) {
