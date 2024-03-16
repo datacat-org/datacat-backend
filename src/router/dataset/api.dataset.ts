@@ -14,12 +14,40 @@ router.get("/", async (req: Request, res: Response) => {
 //create a dataset
 router.post(
   "/",
-  upload.array("files", 5),
+  upload.array("files", 100),
   async (req: Request, res: Response) => {
     console.log("API path", `${req.originalUrl}-[${req.method}]`);
     const response = await DatasetController.createDataset(req.body, req.files);
     return res.status(response.status).json(response);
   }
 );
+
+//create labeled data
+router.post(
+  "/labeled",
+  upload.array("files", 100),
+  async (req: Request, res: Response) => {
+    console.log("API path", `${req.originalUrl}-[${req.method}]`);
+    const response = await DatasetController.createLabeledData(
+      req.body,
+      req.files
+    );
+    return res.status(response.status).json(response);
+  }
+);
+
+//get data to annotate
+router.get("/annotate", async (req: Request, res: Response) => {
+  console.log("API path", `${req.originalUrl}-[${req.method}]`);
+  const response = await DatasetController.getDataToAnnotate(req.body);
+  return res.status(response.status).json(response);
+});
+
+//review a datapoint
+router.post("/review", async (req: Request, res: Response) => {
+  console.log("API path", `${req.originalUrl}-[${req.method}]`);
+  const response = await DatasetController.reviewData(req.body);
+  return res.status(response.status).json(response);
+});
 
 export default router;

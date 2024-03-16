@@ -14,10 +14,23 @@ class UserController {
   }
   async createUser(body: any) {
     try {
+      //check if nullifier hash already exists
+      const user = await Annotator.findOne({
+        nullifier_hash: body.nullifier_hash,
+      });
+      if (user) {
+        return { status: 400, message: "User already exists" };
+      }
+      //circle ci stuff
       const userWalletCreated = await createUserWallet();
       const circleWalletAddress = userWalletCreated.data.wallets[0].address;
       const circleWalletId = userWalletCreated.data.wallets[0].id;
-      const annotator = await Annotator.create({...body, circle_wallet_address: circleWalletAddress, circle_wallet_set_id: circleWalletId});
+      const annotator = await Annotator.create({
+        ...body,
+        circle_wallet_address: circleWalletAddress,
+        circle_wallet_set_id: circleWalletId,
+      });
+
       return { data: annotator, status: 200, message: "Create user" };
     } catch (err: any) {
       console.log(err);
@@ -106,7 +119,7 @@ class UserController {
       console.log(err);
       return { status: 500, message: err.message };
     }
-  }    
+  }
 }
 
 export default new UserController();
