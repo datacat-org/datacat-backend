@@ -57,4 +57,10 @@ router.post("/reviewed", async (req: Request, res: Response) => {
   return res.status(response.status).json(response);
 });
 
+//distribute funds to annotators
+router.post("/distribute", async (req: Request, res: Response) => {
+  console.log("API path", `${req.originalUrl}-[${req.method}]`);
+  const response = await DatasetController.distributeFunds(req.body);
+  return res.status(response.status).json(response);
+});
 export default router;
