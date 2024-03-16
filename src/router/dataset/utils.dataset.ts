@@ -1,6 +1,6 @@
 import { Metric } from "../../models/metrics.model";
 import { Dataset } from "../../models/datasets.model";
-import { Data } from "../../models/data.model";
+// import { Data } from "../../models/data.model";
 // import mongoose from "mongoose";
 
 export const getDatasetFinalLabels = async (datasetId: string) => {
