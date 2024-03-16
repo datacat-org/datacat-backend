@@ -18,7 +18,10 @@ class DatasetController {
   }
   async createDataset(body: any, files: any) {
     try {
-      const dataset = await Dataset.create({ ...body, num_rows: files.length });
+      const dataset = await Dataset.create({
+        ...body,
+        nums_rows: files.length,
+      });
       //multer code to upload multiple files
       const uploaded_files = await Promise.all(
         files.map((file: any) => {
@@ -56,24 +59,30 @@ class DatasetController {
 
       //figure out whether the user gets labeled or unlabelled data
       const random = Math.floor(Math.random() * 10) + 1;
+      console.log(random);
       let data_left: any;
       if (random < 3) {
-        data_left = Data.find({
+        data_left = await Data.find({
           dataset_id: dataset_id,
           is_labeled: true,
         });
       } else {
-        data_left = Data.find({
+        data_left = await Data.find({
           dataset_id: dataset_id,
           is_labeled: false,
           status: "PENDING",
         });
       }
 
+      console.log(data_left.length);
+
       //select random entry from data_left
-      const data = await data_left
-        .limit(1)
-        .skip(Math.floor(Math.random() * data_left.length));
+      const data_length = data_left.length;
+      if (data_length === 0) {
+        return { status: 404, message: "No data to annotate" };
+      }
+      const random2 = Math.floor(Math.random() * data_length);
+      const data = data_left[random2];
       return {
         data: data,
         status: 200,
@@ -101,19 +110,20 @@ class DatasetController {
         grade: body.grade,
       });
 
-      const new_data: any = await Data.updateOne(
-        { _id: new mongoose.Types.ObjectId(data_id) },
+      const new_data: any = await Data.findOneAndUpdate(
+        { _id: data_id },
         { status: "REVIEWED" },
         { new: true }
       );
 
-      const new_dataset: any = await Dataset.updateOne(
+      const new_dataset: any = await Dataset.findOneAndUpdate(
         { _id: new mongoose.Types.ObjectId(new_data.dataset_id) },
         { $inc: { times_annotated: 1 } },
         { new: true }
       );
 
-      if (new_dataset.times_annotated >= new_dataset.num_rows) {
+      console.log(new_dataset);
+      if (new_dataset.times_annotated >= new_dataset.nums_row) {
         await Dataset.updateOne(
           { _id: new mongoose.Types.ObjectId(new_data.dataset_id) },
           { status: "REVIEWED" },

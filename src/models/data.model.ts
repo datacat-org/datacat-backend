@@ -5,7 +5,7 @@ export interface IData extends Document {
   times_annotated: number;
   cid: string;
   status: string;
-  isLabelled: boolean;
+  is_labeled: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,7 +15,7 @@ export const DataSchema: Schema = new Schema({
   times_annotated: { type: Number, default: 0 },
   cid: { type: String, required: true },
   status: { type: String, default: "PENDING" },
-  isLabelled: { type: Boolean, default: false },
+  is_labeled: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
