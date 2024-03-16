@@ -5,6 +5,7 @@ import { Annotator } from "../../models/annotators.model";
 import mongoose from "mongoose";
 import { AnnotatorDataset } from "../../models/annotatorDataset.model";
 import { payAnnotaters } from "../../handlers/payment.handlers";
+import { uploadFileToLighthouse } from "../../handlers/lighthouse.handler";
 import {
   deployCircleContract,
   setShareHolders,
@@ -20,7 +21,7 @@ class DatasetController {
       return { status: 500, message: err.message };
     }
   }
-  async createDataset(body: any) {
+  async createDataset(body: any, files: any) {
     try {
       const deployedContract = await deployCircleContract(
         body.name,
@@ -28,13 +29,19 @@ class DatasetController {
       );
       const dataset = await Dataset.create({
         ...body,
-        nums_row: body.files.length,
+        nums_rows: files.length,
         contractId: deployedContract.contractId,
       });
+      //multer code to upload multiple files
+      const uploaded_files = await Promise.all(
+        files.map((file: any) => {
+          return uploadFileToLighthouse(file.buffer);
+        })
+      );
 
       await Promise.all(
-        body.files.map((data: any) => {
-          return Data.create({ dataset_id: dataset._id, cid: data });
+        uploaded_files.map((data: any) => {
+          return Data.create({ dataset_id: dataset._id, cid: data.data.Hash });
         })
       );
 
@@ -45,15 +52,22 @@ class DatasetController {
     }
   }
 
-  async createLabeledData(body: any) {
+  async createLabeledData(body: any, files: any) {
     try {
       const dataset_id: string = body.dataset_id;
+      const uploaded_files = await Promise.all(
+        files.map((file: any) => {
+          return uploadFileToLighthouse(file.buffer);
+        })
+      );
+
+      console.log(body.labels);
 
       await Promise.all(
-        body.files.map((data: any, idx: number) => {
+        uploaded_files.map((data: any, idx: number) => {
           return Data.create({
             dataset_id: dataset_id,
-            cid: data,
+            cid: data.data.Hash,
             is_labeled: true,
             label: +body.labels[idx],
           });
@@ -65,7 +79,6 @@ class DatasetController {
       return { status: 500, message: err.message };
     }
   }
-
   async getDataToAnnotate(query: any) {
     try {
       const dataset_id: string = query.dataset_id;
