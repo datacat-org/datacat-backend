@@ -43,6 +43,10 @@ app.get("/health", (_, res: Response) => {
 import userRouter from "./router/user/api.user";
 app.use("/api/user", userRouter);
 
+//dataset routes
+import datasetRouter from "./router/dataset/api.dataset";
+app.use("/api/dataset", datasetRouter);
+
 // error handling
 app.use((err: any, _: Request, res: Response, __: any) => {
   console.error(err);

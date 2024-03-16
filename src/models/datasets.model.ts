@@ -3,7 +3,6 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 export interface IDataset extends Document {
   name: string;
   description: string;
-  num_rows: number;
   type: string;
   times_annotated: number;
   status: string;
@@ -14,7 +13,6 @@ export interface IDataset extends Document {
 export const DatasetSchema: Schema = new Schema({
   name: { type: String, required: true },
   description: { type: String },
-  num_rows: { type: Number, required: true },
   type: { type: String },
   times_annotated: { type: Number, default: 0 },
   status: { type: String, default: "PENDING" },
