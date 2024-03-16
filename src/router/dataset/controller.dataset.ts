@@ -23,9 +23,14 @@ class DatasetController {
   }
   async createDataset(body: any, files: any) {
     try {
+      const deployedContract = await deployCircleContract(
+        body.name,
+        body.description
+      );
       const dataset = await Dataset.create({
         ...body,
         nums_rows: files.length,
+        contractId: deployedContract.contractId,
       });
       //multer code to upload multiple files
       const uploaded_files = await Promise.all(
