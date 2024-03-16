@@ -1,5 +1,6 @@
 import { AnnotatorDataset } from "../../models/annotatorDataset.model";
 import { Annotator } from "../../models/annotators.model";
+import { createUserWallet } from "handlers/circle.handler";
 
 class UserController {
   async getUsers(query: any) {
@@ -13,7 +14,10 @@ class UserController {
   }
   async createUser(body: any) {
     try {
-      const annotator = await Annotator.create(body);
+      const userWalletCreated = await createUserWallet();
+      const circleWalletAddress = userWalletCreated.data.wallets[0].address;
+      const circleWalletId = userWalletCreated.data.wallets[0].id;
+      const annotator = await Annotator.create({...body, circle_wallet_address: circleWalletAddress, circle_wallet_set_id: circleWalletId});
       return { data: annotator, status: 200, message: "Create user" };
     } catch (err: any) {
       console.log(err);
