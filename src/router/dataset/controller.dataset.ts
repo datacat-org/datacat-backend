@@ -7,7 +7,7 @@ import { AnnotatorDataset } from "../../models/annotatorDataset.model";
 import { payAnnotaters } from "../../handlers/payment.handlers";
 import {
   deployCircleContract,
-  // setShareHolders,
+  setShareHolders,
 } from "../../handlers/circle.handler";
 import { getDatasetAnnotators } from "./utils.dataset";
 class DatasetController {
@@ -66,10 +66,10 @@ class DatasetController {
     }
   }
 
-  async getDataToAnnotate(params: any) {
+  async getDataToAnnotate(query: any) {
     try {
-      const dataset_id: string = params.dataset_id;
-      const annotator_id: string = params.annotator_id;
+      const dataset_id: string = query.dataset_id;
+      const annotator_id: string = query.annotator_id;
       const annotator = await Annotator.findById(annotator_id);
       if (!annotator) {
         return { status: 404, message: "Annotator not found" };
@@ -161,6 +161,15 @@ class DatasetController {
           },
           { upsert: true, new: true }
         );
+      } else {
+        annotator_dataset = await AnnotatorDataset.findOneAndUpdate(
+          { annotator_id: annotator._id, dataset_id: new_dataset.dataset_id },
+          {
+            annotator_id: annotator._id,
+            dataset_id: new_dataset._id,
+          },
+          { upsert: true, new: true }
+        );
       }
 
       if (new_dataset.times_annotated >= new_dataset.nums_row) {
@@ -187,9 +196,22 @@ class DatasetController {
   async markReviewedAndProcess(body: any) {
     try {
       console.log(body);
-      const annotators = getDatasetAnnotators(body.dataset_id);
-      // const data = await setShareHolders();
-      return { annotators, status: 200, message: "Get annotator data" };
+      const annotators: any = await getDatasetAnnotators(body.dataset_id);
+      const addresses: any = [];
+      const multipliers: any = [];
+      annotators.annotator_ids.forEach((annotator: any) => {
+        addresses.push(annotator.wallet_address);
+        multipliers.push(annotator.multiplier);
+      });
+      const dataset: any = await Dataset.findOne({
+        _id: new mongoose.Types.ObjectId(body.dataset_id),
+      });
+      const data = await setShareHolders(
+        dataset.contractId,
+        addresses,
+        multipliers
+      );
+      return { data, status: 200, message: "Get annotator data" };
     } catch (err: any) {
       console.log(err);
       return { status: 500, message: err.message };

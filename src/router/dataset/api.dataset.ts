@@ -27,7 +27,7 @@ router.post("/labeled", async (req: Request, res: Response) => {
 //get data to annotate
 router.get("/annotate", async (req: Request, res: Response) => {
   console.log("API path", `${req.originalUrl}-[${req.method}]`);
-  const response = await DatasetController.getDataToAnnotate(req.params);
+  const response = await DatasetController.getDataToAnnotate(req.query);
   return res.status(response.status).json(response);
 });
 

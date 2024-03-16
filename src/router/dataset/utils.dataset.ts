@@ -1,5 +1,7 @@
 import { Metric } from "../../models/metrics.model";
 import { Dataset } from "../../models/datasets.model";
+import { AnnotatorDataset } from "../../models/annotatorDataset.model";
+// import { Annotator } from "models/annotators.model";
 // import { Data } from "../../models/data.model";
 // import mongoose from "mongoose";
 
@@ -36,15 +38,22 @@ export const getDatasetFinalLabels = async (datasetId: string) => {
 
 export const getDatasetAnnotators = async (datasetId: string) => {
   try {
-    //get all data ids of dataset
-    // const data=await Data.find({dataset_id:datasetId})
-    const data = await Metric.find({}).populate({
-      path: "data_id",
-      match: { dataset_id: datasetId },
+    const data = await AnnotatorDataset.find({
+      dataset_id: datasetId,
+    }).populate([{ path: "annotator_id" }]);
+
+    const annotator_ids = data.map((annotator: any) => {
+      return {
+        wallet_address: annotator.annotator_id.circle_wallet_address,
+        multiplier: annotator.multiplier,
+      };
     });
 
-    console.log(data);
-    return { data, status: 200, message: "Get all annotators for dataset" };
+    return {
+      annotator_ids,
+      status: 200,
+      message: "Get all annotators for dataset",
+    };
   } catch (err: any) {
     console.log(err);
     return { status: 500, message: err.message };
