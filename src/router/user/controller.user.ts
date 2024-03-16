@@ -13,6 +13,13 @@ class UserController {
   }
   async createUser(body: any) {
     try {
+      //check if nullifier hash already exists
+      const user = await Annotator.findOne({
+        nullifier_hash: body.nullifier_hash,
+      });
+      if (user) {
+        return { status: 400, message: "User already exists" };
+      }
       const annotator = await Annotator.create(body);
       return { data: annotator, status: 200, message: "Create user" };
     } catch (err: any) {
