@@ -28,7 +28,7 @@ class DatasetController {
       );
       const dataset = await Dataset.create({
         ...body,
-        nums_rows: body.files.length,
+        nums_row: body.files.length,
         contractId: deployedContract.contractId,
       });
 
