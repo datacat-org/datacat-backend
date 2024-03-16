@@ -22,4 +22,11 @@ router.post(
   }
 );
 
+//review a datapoint
+router.post("/review", async (req: Request, res: Response) => {
+  console.log("API path", `${req.originalUrl}-[${req.method}]`);
+  const response = await DatasetController.reviewData(req.body);
+  return res.status(response.status).json(response);
+});
+
 export default router;

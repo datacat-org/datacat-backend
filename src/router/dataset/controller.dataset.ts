@@ -2,6 +2,8 @@ import { Dataset } from "../../models/datasets.model";
 import { uploadFileToLighthouse } from "../../handlers/lighthouse.handler";
 import { Data } from "../../models/data.model";
 import { distributeWork } from "../../handlers/distribution.handler";
+import { Metric } from "../../models/metrics.model";
+import { Annotator } from "../../models/annotators.model";
 
 class DatasetController {
   async getDatasets(query: any) {
@@ -32,6 +34,36 @@ class DatasetController {
       await distributeWork(dataset._id, body.num_workers);
 
       return { data: dataset, status: 200, message: "Create dataset" };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
+
+  async reviewData(body: any) {
+    try {
+      const data_id: string = body.data_id;
+      const nullifier_hash: string = body.nullifier_hash;
+      const annotator: any = await Annotator.findOne({
+        nullifier_hash: nullifier_hash,
+      });
+
+      if (!annotator) {
+        return { status: 404, message: "Annotator not found" };
+      }
+
+      const metric = await Metric.create({
+        data_id: data_id,
+        annotaor_id: annotator._id,
+        grade: body.grade,
+      });
+
+      // remove data from annotator's data_assigned
+      await Annotator.updateOne(
+        { _id: annotator._id },
+        { $pull: { data_assigned: data_id } }
+      );
+      return { data: metric, status: 200, message: "Review data" };
     } catch (err: any) {
       console.log(err);
       return { status: 500, message: err.message };
