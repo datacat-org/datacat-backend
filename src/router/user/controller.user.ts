@@ -49,6 +49,21 @@ class UserController {
       return { status: 500, message: err.message };
     }
   }
+  async getUserByWalletAddress(params: any) {
+    try {
+      const annotator = await Annotator.findOne({
+        wallet_address: params.address,
+      });
+      return {
+        data: annotator,
+        status: 200,
+        message: "Get user by wallet address",
+      };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
   async updateUser(params: any, body: any) {
     try {
       const annotator = await Annotator.findByIdAndUpdate(params.id, body, {

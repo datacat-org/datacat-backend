@@ -24,6 +24,13 @@ router.get("/:id", async (req: Request, res: Response) => {
   return res.status(response.status).json(response);
 });
 
+//get annotator by wallet address
+router.get("/wallet/:address", async (req: Request, res: Response) => {
+  console.log("API path", `${req.originalUrl}-[${req.method}]`);
+  const response = await UserController.getUserByWalletAddress(req.params);
+  return res.status(response.status).json(response);
+});
+
 //update annotator by id
 router.put("/:id", async (req: Request, res: Response) => {
   console.log("API path", `${req.originalUrl}-[${req.method}]`);
