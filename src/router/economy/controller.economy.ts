@@ -1,3 +1,4 @@
+import { Consumer } from "../../models/consumers.model";
 import { Dataset } from "../../models/datasets.model";
 import { getDatasetFinalLabels } from "../dataset/utils.dataset";
 
@@ -26,6 +27,16 @@ class EconomyController {
       const final_data_list = response.data;
 
       return { data: final_data_list, status: 200, message: "Dataset bought" };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
+
+  async createConsumer(body: any) {
+    try {
+      const consumer = await Consumer.create(body);
+      return { data: consumer, status: 200, message: "Create consumer" };
     } catch (err: any) {
       console.log(err);
       return { status: 500, message: err.message };

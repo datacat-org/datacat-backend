@@ -1,5 +1,4 @@
 import mongoose, { Document, Model, Schema } from "mongoose";
-import { IData } from "./data.model";
 
 export interface IConsumer extends Document {
   //worldcoin stuff - TO ADD
@@ -10,7 +9,7 @@ export interface IConsumer extends Document {
 
 export const ConsumerSchema: Schema = new Schema({
   //worldcoin stuff - TO ADD
-  wallet_address: { type: String },
+  wallet_address: { type: String, required: true },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
