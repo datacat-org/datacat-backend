@@ -4,6 +4,7 @@ import { Data } from "../../models/data.model";
 import { Metric } from "../../models/metrics.model";
 import { Annotator } from "../../models/annotators.model";
 import mongoose from "mongoose";
+import { AnnotatorDataset } from "../../models/annotatorDataset.model";
 
 class DatasetController {
   async getDatasets(query: any) {
@@ -50,13 +51,15 @@ class DatasetController {
         })
       );
 
+      console.log(body.labels);
+
       await Promise.all(
         uploaded_files.map((data: any, idx: number) => {
           return Data.create({
             dataset_id: dataset_id,
             cid: data.data.Hash,
             is_labeled: true,
-            label: body.labels[idx],
+            label: +body.labels[idx],
           });
         })
       );
@@ -145,16 +148,34 @@ class DatasetController {
         { new: true }
       );
 
-      console.log(new_dataset);
       if (new_dataset.times_annotated >= new_dataset.nums_row) {
-        await Dataset.updateOne(
+        await Dataset.findOneAndUpdate(
           { _id: new mongoose.Types.ObjectId(new_data.dataset_id) },
           { status: "REVIEWED" },
           { new: true }
         );
       }
 
-      return { data: metric, status: 200, message: "Review data" };
+      //do multiplier calcs
+      let annotator_dataset: any;
+      if (new_data.is_labeled) {
+        const grade = body.grade;
+        const label = new_data.label;
+        const percentage_diff = Math.abs(grade - label) / label;
+        console.log(percentage_diff, grade, label);
+        const multiplier = 100 - 100 * percentage_diff;
+        annotator_dataset = await AnnotatorDataset.findOneAndUpdate(
+          { annotator_id: annotator._id, dataset_id: new_dataset.dataset_id },
+          { multiplier: multiplier },
+          { upsert: true, new: true }
+        );
+      }
+
+      return {
+        data: { metric, annotator_dataset },
+        status: 200,
+        message: "Review data",
+      };
     } catch (err: any) {
       console.log(err);
       return { status: 500, message: err.message };
