@@ -41,6 +41,32 @@ class DatasetController {
     }
   }
 
+  async createLabeledData(body: any, files: any) {
+    try {
+      const dataset_id: string = body.dataset_id;
+      const uploaded_files = await Promise.all(
+        files.map((file: any) => {
+          return uploadFileToLighthouse(file.buffer);
+        })
+      );
+
+      await Promise.all(
+        uploaded_files.map((data: any, idx: number) => {
+          return Data.create({
+            dataset_id: dataset_id,
+            cid: data.data.Hash,
+            is_labeled: true,
+            label: body.labels[idx],
+          });
+        })
+      );
+      return { status: 200, message: "Create labeled data" };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
+
   async getDataToAnnotate(body: any) {
     try {
       const dataset_id: string = body.dataset_id;

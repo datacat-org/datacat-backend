@@ -6,6 +6,7 @@ export interface IData extends Document {
   cid: string;
   status: string;
   is_labeled: boolean;
+  label: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,6 +17,7 @@ export const DataSchema: Schema = new Schema({
   cid: { type: String, required: true },
   status: { type: String, default: "PENDING" },
   is_labeled: { type: Boolean, default: false },
+  label: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
