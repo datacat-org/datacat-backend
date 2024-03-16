@@ -6,7 +6,7 @@ import { Annotator } from "../../models/annotators.model";
 import mongoose from "mongoose";
 import { AnnotatorDataset } from "../../models/annotatorDataset.model";
 import { payAnnotaters } from "../../handlers/payment.handlers";
-
+import { deployCircleContract } from "../../handlers/circle.handler";
 class DatasetController {
   async getDatasets(query: any) {
     try {
@@ -19,9 +19,14 @@ class DatasetController {
   }
   async createDataset(body: any, files: any) {
     try {
+      const deployedContract = await deployCircleContract(
+        body.name,
+        body.description
+      );
       const dataset = await Dataset.create({
         ...body,
         nums_rows: files.length,
+        contractId: deployedContract.contractId,
       });
       //multer code to upload multiple files
       const uploaded_files = await Promise.all(

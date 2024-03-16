@@ -12,6 +12,7 @@ export interface IDataset extends Document {
   creator_id: string;
   createdAt: Date;
   updatedAt: Date;
+  contractId: string;
 }
 
 export const DatasetSchema: Schema = new Schema({
@@ -24,6 +25,7 @@ export const DatasetSchema: Schema = new Schema({
   price: { type: Number, default: 0 },
   status: { type: String, default: "PENDING" },
   creator_id: { type: String, required: true },
+  contractId: { type: String },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
