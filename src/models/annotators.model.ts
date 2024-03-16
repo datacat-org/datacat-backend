@@ -3,6 +3,8 @@ import { IData } from "./data.model";
 
 export interface IAnnotator extends Document {
   //worldcoin stuff - TO ADD
+  circle_wallet_address: string;
+  circle_wallet_set_id: string;
   nullifier_hash: string;
   wallet_address: string;
   data_assigned: IData["_id"][];
@@ -12,8 +14,10 @@ export interface IAnnotator extends Document {
 
 export const AnnotatorSchema: Schema = new Schema({
   //worldcoin stuff - TO ADD
+  cirle_wallet_address: { type: String },
+  circle_wallet_set_id: { type: String },
   nullifier_hash: { type: String, required: true },
-  wallet_address: { type: String, required: true },
+  wallet_address: { type: String },
   data_assigned: [{ type: Schema.Types.ObjectId, ref: "data" }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },

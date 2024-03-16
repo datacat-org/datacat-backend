@@ -1,6 +1,7 @@
 import { Dataset } from "../../models/datasets.model";
 import { uploadFileToLighthouse } from "../../handlers/lighthouse.handler";
 import { Data } from "../../models/data.model";
+import { distributeWork } from "../../handlers/distribution.handler";
 
 class DatasetController {
   async getDatasets(query: any) {
@@ -27,6 +28,8 @@ class DatasetController {
           return Data.create({ dataset_id: dataset._id, cid: data.data.Hash });
         })
       );
+
+      await distributeWork(dataset._id, body.num_workers);
 
       return { data: dataset, status: 200, message: "Create dataset" };
     } catch (err: any) {
