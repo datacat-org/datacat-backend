@@ -1,5 +1,9 @@
 import { AnnotatorDataset } from "../../models/annotatorDataset.model";
 import { Annotator } from "../../models/annotators.model";
+import {
+  createUserWallet,
+  getWalletBalances,
+} from "../../handlers/circle.handler";
 
 class UserController {
   async getUsers(query: any) {
@@ -20,7 +24,16 @@ class UserController {
       if (user) {
         return { status: 400, message: "User already exists" };
       }
-      const annotator = await Annotator.create(body);
+      //circle ci stuff
+      const userWalletCreated = await createUserWallet();
+      const circleWalletAddress = userWalletCreated[0].address;
+      const circleWalletId = userWalletCreated[0].id;
+      const annotator = await Annotator.create({
+        ...body,
+        circle_wallet_address: circleWalletAddress,
+        circle_wallet_id: circleWalletId,
+      });
+
       return { data: annotator, status: 200, message: "Create user" };
     } catch (err: any) {
       console.log(err);
@@ -91,6 +104,25 @@ class UserController {
     }
   }
 
+  async getUserWalletBalance(params: any) {
+    try {
+      const user_id = params.id;
+      const user = await Annotator.findById(user_id);
+      if (!user) {
+        throw new Error("User not found");
+      }
+      const wallet_id = user.circle_wallet_id;
+      const walletBalances = await getWalletBalances(wallet_id);
+      return {
+        data: walletBalances,
+        status: 200,
+        message: "Get wallet balances for user",
+      };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
   async getUserData(params: any) {
     try {
       const annotator = await Annotator.findById(params.user_id);

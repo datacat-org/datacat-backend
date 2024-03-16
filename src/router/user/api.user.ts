@@ -55,6 +55,13 @@ router.get(
   }
 );
 
+//get user wallet balance
+router.get("/:id/wallet/balance", async (req: Request, res: Response) => {
+  console.log("API path", `${req.originalUrl}-[${req.method}]`);
+  const response = await UserController.getUserWalletBalance(req.params);
+  return res.status(response.status).json(response);
+});
+
 //get user data along with multiplier
 router.get(
   "/:user_id/data/:dataset_id",

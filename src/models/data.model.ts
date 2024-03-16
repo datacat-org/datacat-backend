@@ -17,7 +17,7 @@ export const DataSchema: Schema = new Schema({
   cid: { type: String, required: true },
   status: { type: String, default: "PENDING" },
   is_labeled: { type: Boolean, default: false },
-  label: { type: Number, default: 0 },
+  label: { type: Number, default: 1 },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
