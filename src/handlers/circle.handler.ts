@@ -56,17 +56,14 @@ export const createUserWallet = async () => {
 };
 
 export const getWalletBalances = async (walletId: string) => {
-  const options = {
-    method: "GET",
-    url: `https://api.circle.com/v1/w3s/wallets/${walletId}/balances`,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
-    },
+  const url = `https://api.circle.com/v1/w3s/wallets/${walletId}/balances`;
+  const headers = {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
   };
 
   try {
-    const response = await axios.request(options);
+    const response = await axios.get(url, { headers });
     console.log(response.data);
     return response.data;
   } catch (error) {
