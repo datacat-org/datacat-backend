@@ -32,3 +32,19 @@ export const getDatasetFinalLabels = async (datasetId: string) => {
     return { status: 500, message: err.message };
   }
 };
+
+export const getDatasetAnnotators = async (datasetId: string) => {
+  try {
+    const data = await Metric.find({})
+      .populate({
+        path: "data_id",
+        match: { dataset_id: datasetId },
+      })
+      .populate("annotator_id");
+    console.log(data);
+    return { data, status: 200, message: "Get all annotators for dataset" };
+  } catch (err: any) {
+    console.log(err);
+    return { status: 500, message: err.message };
+  }
+};

@@ -5,7 +5,11 @@ import { Annotator } from "../../models/annotators.model";
 import mongoose from "mongoose";
 import { AnnotatorDataset } from "../../models/annotatorDataset.model";
 import { payAnnotaters } from "../../handlers/payment.handlers";
-import { deployCircleContract } from "../../handlers/circle.handler";
+import {
+  deployCircleContract,
+  // setShareHolders,
+} from "../../handlers/circle.handler";
+import { getDatasetAnnotators } from "./utils.dataset";
 class DatasetController {
   async getDatasets(query: any) {
     try {
@@ -62,10 +66,10 @@ class DatasetController {
     }
   }
 
-  async getDataToAnnotate(body: any) {
+  async getDataToAnnotate(params: any) {
     try {
-      const dataset_id: string = body.dataset_id;
-      const annotator_id: string = body.annotator_id;
+      const dataset_id: string = params.dataset_id;
+      const annotator_id: string = params.annotator_id;
       const annotator = await Annotator.findById(annotator_id);
       if (!annotator) {
         return { status: 404, message: "Annotator not found" };
@@ -183,7 +187,9 @@ class DatasetController {
   async markReviewedAndProcess(body: any) {
     try {
       console.log(body);
-      return { status: 200, message: "Get annotator data" };
+      const annotators = getDatasetAnnotators(body.dataset_id);
+      // const data = await setShareHolders();
+      return { annotators, status: 200, message: "Get annotator data" };
     } catch (err: any) {
       console.log(err);
       return { status: 500, message: err.message };

@@ -145,7 +145,6 @@ export const deployCircleContract = async (
 };
 
 export const setShareHolders = async (
-  walletId: string,
   contractAddress: string,
   walletAddresses: any,
   shareAmounts: any
@@ -157,17 +156,13 @@ export const setShareHolders = async (
     Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
   };
   const data = {
-    walletId: walletId,
+    idempotencyKey: uuidv4(),
+    walletId: process.env.ADMIN_CIRCLE_WALLET_ID,
     contractAddress: contractAddress,
     abiFunctionSignature:
       "setShares(address[] memory _payees,uint256[] memory _shares)",
     abiParameters: [walletAddresses, shareAmounts],
-    fee: {
-      type: "level",
-      config: {
-        feeLevel: "MEDIUM",
-      },
-    },
+    feeLevel: "MEDIUM",
   };
   try {
     const response = await axios.post(url, data, { headers });
