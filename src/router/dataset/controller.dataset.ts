@@ -5,6 +5,7 @@ import { Metric } from "../../models/metrics.model";
 import { Annotator } from "../../models/annotators.model";
 import mongoose from "mongoose";
 import { AnnotatorDataset } from "../../models/annotatorDataset.model";
+import { payAnnotaters } from "../../handlers/payment.handlers";
 
 class DatasetController {
   async getDatasets(query: any) {
@@ -148,14 +149,6 @@ class DatasetController {
         { new: true }
       );
 
-      if (new_dataset.times_annotated >= new_dataset.nums_row) {
-        await Dataset.findOneAndUpdate(
-          { _id: new mongoose.Types.ObjectId(new_data.dataset_id) },
-          { status: "REVIEWED" },
-          { new: true }
-        );
-      }
-
       //do multiplier calcs
       let annotator_dataset: any;
       if (new_data.is_labeled) {
@@ -166,9 +159,23 @@ class DatasetController {
         const multiplier = 100 - 100 * percentage_diff;
         annotator_dataset = await AnnotatorDataset.findOneAndUpdate(
           { annotator_id: annotator._id, dataset_id: new_dataset.dataset_id },
-          { multiplier: multiplier },
+          {
+            multiplier: multiplier,
+            annotator_id: annotator._id,
+            dataset_id: new_dataset._id,
+          },
           { upsert: true, new: true }
         );
+      }
+
+      if (new_dataset.times_annotated >= new_dataset.nums_row) {
+        await Dataset.findOneAndUpdate(
+          { _id: new mongoose.Types.ObjectId(new_data.dataset_id) },
+          { status: "REVIEWED" },
+          { new: true }
+        );
+
+        await payAnnotaters(new_data.dataset_id);
       }
 
       return {

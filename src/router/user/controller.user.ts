@@ -90,6 +90,24 @@ class UserController {
       return { status: 500, message: err.message };
     }
   }
+
+  async getUserData(params: any) {
+    try {
+      const annotator = await Annotator.findById(params.user_id);
+      const annotator_datasets = await AnnotatorDataset.find({
+        annotator_id: params.user_id,
+        dataset_id: params.dataset_id,
+      });
+      return {
+        data: { annotator, annotator_datasets },
+        status: 200,
+        message: "Get user data",
+      };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
 }
 
 export default new UserController();
