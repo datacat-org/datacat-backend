@@ -225,3 +225,16 @@ export const distributeFunds = async (contract_id: string) => {
     return { status: 500, message: err.message };
   }
 };
+
+// export const walletToWalletTransfer = async (wallet_id: any) => {
+//   try {
+//     const balances = await getWalletBalances(wallet_id as string);
+//     if (!balances.data.tokens) {
+//       console.log("No tokens");
+//       return { status: 404, message: "Wallet has no balance" };
+//     }
+//   } catch (err: any) {
+//     console.log(err);
+//     return { status: 500, message: err.message };
+//   }
+// };
