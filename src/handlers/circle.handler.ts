@@ -225,3 +225,46 @@ export const distributeFunds = async (contract_id: string) => {
     return { status: 500, message: err.message };
   }
 };
+
+// export const walletToWalletTransfer = async (wallet_id: any) => {
+//   try {
+//     const balances = await getWalletBalances(wallet_id as string);
+//     if (!balances.data.tokens) {
+//       console.log("No tokens");
+//       return { status: 404, message: "Wallet has no balance" };
+//     }
+//   } catch (err: any) {
+//     console.log(err);
+//     return { status: 500, message: err.message };
+//   }
+// };
+
+export const approveWallet = async (wallet_id: any, wallet_address: any) => {
+  try {
+    console.log("wallet_id", wallet_id);
+    console.log("wallet_address", wallet_address);
+    const entitySecretCipherText: any = await createEntitySecretKey();
+    const url =
+      "https://api.circle.com/v1/w3s/developer/transactions/contractExecution";
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
+      accept: "application/json",
+    };
+    const data = {
+      idempotencyKey: uuidv4(),
+      walletId: process.env.ADMIN_CIRCLE_WALLET_ID,
+      contractAddress: usdcTokenID,
+      abiFunctionSignature: "approve(address _spender, uint256 _value)",
+      abiParameters: [wallet_address, "1000000000000000000000000000000"],
+      feeLevel: "MEDIUM",
+      entitySecretCipherText,
+    };
+    const response = await axios.post(url, data, { headers });
+    console.log(response.data);
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    return { status: 500, message: err.message };
+  }
+};

@@ -30,7 +30,7 @@ class DatasetController {
       );
       const dataset = await Dataset.create({
         ...body,
-        nums_rows: files.length,
+        nums_row: files.length,
         contractId: deployedContract.contractId,
       });
       //multer code to upload multiple files
