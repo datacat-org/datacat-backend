@@ -146,6 +146,9 @@ class DatasetController {
         grade: body.grade,
       });
 
+      annotator.score += 1;
+      await annotator.save();
+
       const new_data: any = await Data.findOneAndUpdate(
         { _id: data_id },
         { status: "REVIEWED" },

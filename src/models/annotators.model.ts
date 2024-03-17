@@ -8,6 +8,7 @@ export interface IAnnotator extends Document {
   nullifier_hash: string;
   wallet_address: string;
   data_assigned: IData["_id"][];
+  score: number;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,6 +20,7 @@ export const AnnotatorSchema: Schema = new Schema({
   nullifier_hash: { type: String, required: true },
   wallet_address: { type: String },
   data_assigned: [{ type: Schema.Types.ObjectId, ref: "data" }],
+  score: { type: Number, default: 0 },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
 });
