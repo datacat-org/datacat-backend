@@ -5,7 +5,7 @@ import { abi, byteCode } from "../abi/transfer.abi.json";
 
 const entitySecretCipherText = process.env.CIRCLE_ENTITY_SECRET as string;
 const walletSetId = process.env.CIRCLE_WALLET_SET_ID;
-const usdcTokenID = "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747";
+const usdcTokenID = "0xc64D44204d5c2109833e54311744a48dF7EB964D";
 const contractAbi = abi;
 const stakkingContractAddress = "0x36710713531071E676a18110324ab7ADc5395f25";
 
