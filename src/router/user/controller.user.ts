@@ -188,7 +188,7 @@ class UserController {
       return {
         data: approval_data,
         status: 200,
-        message: "Approve user",
+        message: "Staking",
       };
     } catch (err: any) {
       console.log(err);
@@ -207,7 +207,7 @@ class UserController {
       return {
         data: approval_data,
         status: 200,
-        message: "Approve user",
+        message: "Unstaking",
       };
     } catch (err: any) {
       console.log(err);
