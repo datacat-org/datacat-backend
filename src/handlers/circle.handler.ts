@@ -28,7 +28,9 @@ export const createEntitySecretKey = async () => {
 };
 
 export const getContractAddress = async (contractId: string) => {
+  console.log("contractId", contractId);
   const url = `https://api.circle.com/v1/w3s/contracts/${contractId}`;
+  console.log(url);
   const headers = {
     "Content-Type": "application/json",
     Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,

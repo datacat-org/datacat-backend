@@ -4,12 +4,12 @@ import { Metric } from "../../models/metrics.model";
 import { Annotator } from "../../models/annotators.model";
 import mongoose from "mongoose";
 import { AnnotatorDataset } from "../../models/annotatorDataset.model";
-import { payAnnotaters } from "../../handlers/payment.handlers";
 import { uploadFileToLighthouse } from "../../handlers/lighthouse.handler";
 import {
   deployCircleContract,
   setShareHolders,
   distributeFunds,
+  getContractAddress,
 } from "../../handlers/circle.handler";
 import { getDatasetAnnotators } from "./utils.dataset";
 class DatasetController {
@@ -193,7 +193,7 @@ class DatasetController {
           { new: true }
         );
 
-        await payAnnotaters(new_data.dataset_id);
+        await this.markReviewedAndProcess({ dataset_id: new_data.dataset_id });
       }
 
       return {
@@ -241,6 +241,20 @@ class DatasetController {
       const data = await distributeFunds(contractId);
 
       return { data, status: 200, message: "Get annotator data" };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
+
+  async getContractDetails(params: any) {
+    try {
+      const contract: any = await getContractAddress(params.id as string);
+      return {
+        data: contract.contract.contractAddress,
+        status: 200,
+        message: "Get contract details",
+      };
     } catch (err: any) {
       console.log(err);
       return { status: 500, message: err.message };
