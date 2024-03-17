@@ -7,7 +7,7 @@ const entitySecretCipherText = process.env.CIRCLE_ENTITY_SECRET as string;
 const walletSetId = process.env.CIRCLE_WALLET_SET_ID;
 const usdcTokenID = "0xc64D44204d5c2109833e54311744a48dF7EB964D";
 const contractAbi = abi;
-const stakkingContractAddress = "0x36710713531071E676a18110324ab7ADc5395f25";
+const stakingContractAddress = "0x36710713531071E676a18110324ab7ADc5395f25";
 
 export const createEntitySecretKey = async () => {
   const url = "https://api.circle.com/v1/w3s/config/entity/publicKey";
@@ -257,7 +257,7 @@ export const approveWallet = async (wallet_id: any) => {
       contractAddress: usdcTokenID,
       abiFunctionSignature: "approve(address _spender, uint256 _value)",
       abiParameters: [
-        stakkingContractAddress,
+        stakingContractAddress,
         "1000000000000000000000000000000",
       ],
       feeLevel: "MEDIUM",
@@ -286,9 +286,9 @@ export const staking = async (wallet_id: string, amount: any) => {
     const data = {
       idempotencyKey: uuidv4(),
       walletId: process.env.ADMIN_CIRCLE_WALLET_ID,
-      contractAddress: usdcTokenID,
+      contractAddress: stakingContractAddress,
       abiFunctionSignature: "stake(address token, uint256 amount)",
-      abiParameters: [usdcTokenID, amount.toString()],
+      abiParameters: [usdcTokenID, amount],
       feeLevel: "HIGH",
       entitySecretCipherText,
     };
@@ -316,7 +316,7 @@ export const unstaking = async (wallet_id: string, amount: any) => {
     const data = {
       idempotencyKey: uuidv4(),
       walletId: process.env.ADMIN_CIRCLE_WALLET_ID,
-      contractAddress: usdcTokenID,
+      contractAddress: stakingContractAddress,
       abiFunctionSignature: "unstake(address token, uint256 amount)",
       abiParameters: [usdcTokenID, amount.toString()],
       feeLevel: "HIGH",
