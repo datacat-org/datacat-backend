@@ -86,4 +86,18 @@ router.post("/approve", async (req: Request, res: Response) => {
   return res.status(response.status).json(response);
 });
 
+//stake
+router.post("/stake", async (req: Request, res: Response) => {
+  console.log("API path", `${req.originalUrl}-[${req.method}]`);
+  const response = await UserController.stake(req.body);
+  return res.status(response.status).json(response);
+});
+
+//unstake
+router.post("/unstake", async (req: Request, res: Response) => {
+  console.log("API path", `${req.originalUrl}-[${req.method}]`);
+  const response = await UserController.unstake(req.body);
+  return res.status(response.status).json(response);
+});
+
 export default router;

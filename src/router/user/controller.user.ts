@@ -4,6 +4,8 @@ import {
   createUserWallet,
   getWalletBalances,
   approveWallet,
+  staking,
+  unstaking,
 } from "../../handlers/circle.handler";
 
 class UserController {
@@ -163,9 +165,44 @@ class UserController {
     try {
       const annotaor_id = body.annotator_id;
       const annotator: any = await Annotator.findById(annotaor_id);
-      const approval_data = await approveWallet(
+      const approval_data = await approveWallet(annotator.circle_wallet_id);
+      return {
+        data: approval_data,
+        status: 200,
+        message: "Approve user",
+      };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
+
+  async stake(body: any) {
+    try {
+      const annotator_id = body.annotator_id;
+      const annotator: any = await Annotator.findById(annotator_id);
+      const approval_data = await staking(
         annotator.circle_wallet_id,
-        annotator.circle_wallet_address
+        body.amount
+      );
+      return {
+        data: approval_data,
+        status: 200,
+        message: "Approve user",
+      };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
+
+  async unstake(body: any) {
+    try {
+      const annotator_id = body.annotator_id;
+      const annotator: any = await Annotator.findById(annotator_id);
+      const approval_data = await unstaking(
+        annotator.circle_wallet_id,
+        body.amount
       );
       return {
         data: approval_data,
