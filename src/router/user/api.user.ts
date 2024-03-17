@@ -79,4 +79,11 @@ router.get(
   }
 );
 
+//approve user address
+router.post("/approve", async (req: Request, res: Response) => {
+  console.log("API path", `${req.originalUrl}-[${req.method}]`);
+  const response = await UserController.approveUser(req.body);
+  return res.status(response.status).json(response);
+});
+
 export default router;

@@ -3,6 +3,7 @@ import { Annotator } from "../../models/annotators.model";
 import {
   createUserWallet,
   getWalletBalances,
+  approveWallet,
 } from "../../handlers/circle.handler";
 
 class UserController {
@@ -151,6 +152,25 @@ class UserController {
         data: { annotator, annotator_datasets },
         status: 200,
         message: "Get user data",
+      };
+    } catch (err: any) {
+      console.log(err);
+      return { status: 500, message: err.message };
+    }
+  }
+
+  async approveUser(body: any) {
+    try {
+      const annotaor_id = body.annotator_id;
+      const annotator: any = await Annotator.findById(annotaor_id);
+      const approval_data = await approveWallet(
+        annotator.circle_wallet_id,
+        annotator.circle_wallet_address
+      );
+      return {
+        data: approval_data,
+        status: 200,
+        message: "Approve user",
       };
     } catch (err: any) {
       console.log(err);
