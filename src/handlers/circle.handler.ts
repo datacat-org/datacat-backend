@@ -7,6 +7,7 @@ const entitySecretCipherText = process.env.CIRCLE_ENTITY_SECRET as string;
 const walletSetId = process.env.CIRCLE_WALLET_SET_ID;
 const usdcTokenID = "0xe6b8a5CF854791412c1f6EFC7CAf629f5Df1c747";
 const contractAbi = abi;
+const stakkingContractAddress = "0x36710713531071E676a18110324ab7ADc5395f25";
 
 export const createEntitySecretKey = async () => {
   const url = "https://api.circle.com/v1/w3s/config/entity/publicKey";
@@ -239,10 +240,9 @@ export const distributeFunds = async (contract_id: string) => {
 //   }
 // };
 
-export const approveWallet = async (wallet_id: any, wallet_address: any) => {
+export const approveWallet = async (wallet_id: any) => {
   try {
     console.log("wallet_id", wallet_id);
-    console.log("wallet_address", wallet_address);
     const entitySecretCipherText: any = await createEntitySecretKey();
     const url =
       "https://api.circle.com/v1/w3s/developer/transactions/contractExecution";
@@ -256,10 +256,73 @@ export const approveWallet = async (wallet_id: any, wallet_address: any) => {
       walletId: process.env.ADMIN_CIRCLE_WALLET_ID,
       contractAddress: usdcTokenID,
       abiFunctionSignature: "approve(address _spender, uint256 _value)",
-      abiParameters: [wallet_address, "1000000000000000000000000000000"],
+      abiParameters: [
+        stakkingContractAddress,
+        "1000000000000000000000000000000",
+      ],
       feeLevel: "MEDIUM",
       entitySecretCipherText,
     };
+    const response = await axios.post(url, data, { headers });
+    console.log(response.data);
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    return { status: 500, message: err.message };
+  }
+};
+
+export const staking = async (wallet_id: string, amount: any) => {
+  try {
+    console.log("wallet_id", wallet_id);
+    const entitySecretCipherText: any = await createEntitySecretKey();
+    const url =
+      "https://api.circle.com/v1/w3s/developer/transactions/contractExecution";
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
+      accept: "application/json",
+    };
+    const data = {
+      idempotencyKey: uuidv4(),
+      walletId: process.env.ADMIN_CIRCLE_WALLET_ID,
+      contractAddress: usdcTokenID,
+      abiFunctionSignature: "stake(address token, uint256 amount)",
+      abiParameters: [usdcTokenID, amount.toString()],
+      feeLevel: "HIGH",
+      entitySecretCipherText,
+    };
+
+    const response = await axios.post(url, data, { headers });
+    console.log(response.data);
+    return response.data;
+  } catch (err: any) {
+    console.log(err);
+    return { status: 500, message: err.message };
+  }
+};
+
+export const unstaking = async (wallet_id: string, amount: any) => {
+  try {
+    console.log("wallet_id", wallet_id);
+    const entitySecretCipherText: any = await createEntitySecretKey();
+    const url =
+      "https://api.circle.com/v1/w3s/developer/transactions/contractExecution";
+    const headers = {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${process.env.CIRCLE_API_KEY}`,
+      accept: "application/json",
+    };
+    const data = {
+      idempotencyKey: uuidv4(),
+      walletId: process.env.ADMIN_CIRCLE_WALLET_ID,
+      contractAddress: usdcTokenID,
+      abiFunctionSignature: "unstake(address token, uint256 amount)",
+      abiParameters: [usdcTokenID, amount.toString()],
+      feeLevel: "HIGH",
+      entitySecretCipherText,
+    };
+
     const response = await axios.post(url, data, { headers });
     console.log(response.data);
     return response.data;
